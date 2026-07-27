@@ -21,7 +21,7 @@ jobs:
 
       - name: run scraper
         env:
-          afri_id: '{{ $secrets.AFRI_ID}}'
+          afri_ex: '{{ $secrets.AFRI_ID}}'
           eomo_key.json: eomo_key.json
           PYTHONPATH: ${{ github.workspace }}
         
