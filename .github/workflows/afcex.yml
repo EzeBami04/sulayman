@@ -1,4 +1,4 @@
-name: Ncx price update
+name: Afcex price update
 
 on:
   workflow_dispatch:
