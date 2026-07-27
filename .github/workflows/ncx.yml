@@ -2,10 +2,9 @@ name: Ncx price update
 
 on:
   workflow_dispatch:
-    branches: ["main"]
 jobs:
   get_prices:
-    runs_on: ubuntu-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Check out repository
