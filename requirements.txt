@@ -2,3 +2,4 @@ selenium
 playwright
 google-oauth
 beautifulsoup4
+gspread
