@@ -22,7 +22,7 @@ jobs:
 
       - name: run scraper
         env:
-          sheet_id: ${{ secrets.AFRI_ID }}
+          afri_ex: ${{ secrets.AFRI_ID }}
           eomo_json_key: eomo_key.json
           PYTHONPATH: ${{ github.workspace }}
         run: python src/ncx.py
