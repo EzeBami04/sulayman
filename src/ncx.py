@@ -24,7 +24,7 @@ TICKER_ITEM_SELECTOR = "li.ticker-inner .ticker-elem-inner h3"
 SERVICE_ACCOUNT_FILE = os.getenv("eomo_json_key")
 SHEET_ID = os.getenv("afri_ex")    
 
-LATEST_TAB_NAME = "ncx Latest Prices"
+# LATEST_TAB_NAME = "ncx Latest Prices"
 HISTORY_TAB_NAME = "ncx_price_history"
 
 SCOPES = [
@@ -111,15 +111,15 @@ def push_to_sheets(rows):
     timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
     header = ["Code", "Commodity", "Price", "Change", "Direction", "Scraped At (UTC)"]
 
-    try:
-        ws_latest = sh.worksheet(LATEST_TAB_NAME)
-    except gspread.WorksheetNotFound:
-        ws_latest = sh.add_worksheet(title=LATEST_TAB_NAME, rows=200, cols=6)
-    ws_latest.clear()
-    ws_latest.update(range_name="A1", values=[header] + [
-        [r["code"], r["name"], r["price"], r["change"], r["direction"], timestamp]
-        for r in rows
-    ])
+    # try:
+    #     ws_latest = sh.worksheet(LATEST_TAB_NAME)
+    # except gspread.WorksheetNotFound:
+    #     ws_latest = sh.add_worksheet(title=LATEST_TAB_NAME, rows=200, cols=6)
+    # ws_latest.clear()
+    # ws_latest.update(range_name="A1", values=[header] + [
+    #     [r["code"], r["name"], r["price"], r["change"], r["direction"], timestamp]
+    #     for r in rows
+    # ])
 
     try:
         ws_history = sh.worksheet(HISTORY_TAB_NAME)
