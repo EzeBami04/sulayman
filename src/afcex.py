@@ -71,6 +71,7 @@ def scrape_afcex(url):
     page = driver.web_driver()
     try:
         page.get(url)
+        page.set_page_load_timeout(45)
         WebDriverWait(page, 20).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, TICKER_ITEM_SELECTOR))
         )

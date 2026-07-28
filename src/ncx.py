@@ -7,6 +7,7 @@ from driver import Driver
 from selenium.webdriver.common.by import By     
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
 
 import gspread
 from google.oauth2.service_account import Credentials
@@ -21,10 +22,10 @@ NCX_URL = "https://ncx.com.ng/"
 TICKER_ITEM_SELECTOR = "li.ticker-inner .ticker-elem-inner h3"
 
 SERVICE_ACCOUNT_FILE = os.getenv("eomo_json_key")
-SHEET_ID = os.getenv("sheet_id")    
+SHEET_ID = os.getenv("afri_ex")    
 
-LATEST_TAB_NAME = "Latest Prices"
-HISTORY_TAB_NAME = "Price History"
+LATEST_TAB_NAME = "ncx Latest Prices"
+HISTORY_TAB_NAME = "ncx_price_history"
 
 SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive",]
@@ -63,9 +64,17 @@ def scrape_ticker():
     driver = driver.web_driver()
 
     try:
-        driver.get(NCX_URL)
+        driver.set_page_load_timeout(60)
+        try:
+            driver.get(NCX_URL)
+            
+        except TimeoutException:
+            logging.warning("Page load timed out, stopping further loading and continuing")
+            driver.execute_script("window.stop();")
+        
         WebDriverWait(driver, 20).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, TICKER_ITEM_SELECTOR)))
+        
         time.sleep(2) 
 
         elements = driver.find_elements(By.CSS_SELECTOR, TICKER_ITEM_SELECTOR)
@@ -120,8 +129,7 @@ def push_to_sheets(rows):
     ws_history.append_rows(
         [[r["code"], r["name"], r["price"], r["change"], r["direction"], timestamp]
          for r in rows],
-        value_input_option="USER_ENTERED",
-    )
+        value_input_option="USER_ENTERED",)
 
 
 def main():
@@ -138,9 +146,10 @@ def main():
 
     logging.info(f"Found {len(rows)} commodities:")
     for r in rows:
-        print(f"  {r['code']}: {r['price']} ({r['change']} {r['direction']})")
+        logging.info(f"  {r['code']}: {r['price']} ({r['change']} {r['direction']})")
 
     logging.info("Pushing to Google Sheets...")
+
     push_to_sheets(rows)
     logging.info("Done.")
 
